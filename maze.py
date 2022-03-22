@@ -1,16 +1,14 @@
 import pygame
 import time
 import random
-import board
 import bonus
 import math
 from itertools import product
 
 WHITE=(255,255,255)
-GREEN=(0,204,102)
-BROWN=(165,42,42)
+GREEN=(0,170,0)
 
-class Maze(board.Board):
+class Maze(bonus.Board):
     def __init__(self, data: int):
         self.cell_size = self.margin = 30
         self.grid_size = 5
@@ -24,16 +22,17 @@ class Maze(board.Board):
         pygame.init()
         pygame.display.set_caption("'THE MAZE GAME'")
         self.screen = pygame.display.set_mode((self.all_web + 2 * self.margin, self.all_web + 2 * self.margin))
-        self.screen.fill(BROWN)
+        # self.screen.fill(BROWN)
         self.object_list = []
         self.map = [[]]
+        self.background=pygame.image.load('moss.jpg')
 
     def add_object(self, object: bonus.Object):
         self.object_list.append(object)
 
     def refresh_screen(self):
-        background = pygame.image.load('maze.jpg')
-        self.screen.blit(background, (0, 0))
+        self.background = pygame.image.load('maze.jpg')
+        self.screen.blit(self.background, (0, 0))
         for obj in self.object_list:
             self.screen.blit(obj.img, (obj.object_x, obj.object_y))
             pygame.display.flip()
@@ -70,6 +69,7 @@ class Maze(board.Board):
 
     #funcion for creating a web
     def build_web(self):
+        # self.screen.blit(self.background, (0, 0))
         for i in range(1, self.grid_size):
             pygame.draw.line(self.screen, WHITE, ((i * self.cell_size) + self.margin, self.margin), ((i * self.cell_size) + self.margin, self.all_web + self.margin), 1)
             pygame.draw.line(self.screen, WHITE, (self.margin, (i * self.cell_size) + self.margin), (self.all_web + self.margin, (i * self.cell_size) + self.margin), 1)
@@ -127,6 +127,7 @@ class Maze(board.Board):
 
     #the most important function which genarates the maze
     def draw_maze(self,x, y):
+        self.screen.blit(self.background, (0, 0))
         self.stop.append((x, y))
         self.visited.append((x, y))
         while len(self.stop)>0:
