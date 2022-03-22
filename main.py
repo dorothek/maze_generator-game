@@ -1,93 +1,68 @@
+#kontroluje cały przebieg gry
 import maze
+import player
 import pygame
-import math
+import time
 
-playerImg = pygame.image.load('rat.png')
-playerX=2*maze.cell_size
-playerY=maze.cell_size
-player_size=24
-move_x=0
-move_y=0
-print(maze.visited)
+# def is_collision(obj_x, obj_y, self_x, self_y):
+#     distance = math.sqrt(math.pow(obj_x - self_x, 2) + (math.pow(obj_y - self_y, 2)))
+#     if distance < 20:
+#         return True
+#     else:
+#         return False
 
-schema = []
+def main():
+    #wyświetlić rules of the game
+    #wybór trybu gry
+    #jeśli single player to wybrać level
 
-# def maze_schema():
-#     for i in range(1, maze.all_web):
-#         for j in maze.visited:
-#             if maze.board[i] == maze.visited[j]:
-#                 schema.append(0)
-#             else:
-#                 schema.append(1)
-#
-# maze_schema()
-# print (schema)
+    print("Please, input the size of the maze: ")
+    data = int(input())
+    #maze generation
+    labirynt = maze.Maze(data)
+    labirynt.build_web()
+    labirynt.make_cartesian()
+    labirynt.draw_maze(2 * labirynt.cell_size, 2 * labirynt.cell_size)
 
+    #creating map of the gameboard
+    labirynt.create_map()
 
-def player(x,y):
-    maze.screen.blit(playerImg, (x,y))
-    # pygame.display.flip()
+    gamer=player.Human()
+    gamer.object_x = 2 * labirynt.cell_size
+    gamer.object_y = labirynt.cell_size
+    labirynt.add_object(gamer)
+    labirynt.refresh_screen()
+    #the main loop
+    run = True
+    while run:
+        time.sleep(0.4)
+        for event in pygame.event.get():
+            step_size=5
+            move_x = 0
+            move_y = 0
+            if event.type == pygame.QUIT:
+                run = False
+                ##########
+        # right or left move
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    move_x = step_size
+                if event.key == pygame.K_LEFT:
+                    move_x = -step_size
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_LEFT:
+                        move_x = 0
+        # up or down move
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    move_y = step_size
+                if event.key == pygame.K_UP:
+                    move_y = -step_size
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                    move_y = 0
+            if move_x !=0 or move_y !=0:
+                labirynt.move_object_to(gamer, gamer.object_x+move_x, gamer.object_y+move_y)
+                labirynt.refresh_screen()
 
-def is_collision(obj_x, obj_y, self_x, self_y):
-    distance = math.sqrt(math.pow(obj_x - self_x, 2) + (math.pow(obj_y - self_y, 2)))
-    if distance < 20:
-        return True
-    else:
-        return False
-
-def check_point(x,y):
-    map_x=math.floor(x/maze.cell_size)
-    map_y=math.floor(y/maze.cell_size)
-    pom=maze.map[map_y][map_x]
-    if pom==1:
-        return True
-    else:
-        return False
-
-def is_corridor(x,y):
-    if not check_point(x,y):
-        return False
-    if not check_point(x+player_size,y):
-        return False
-    if not check_point(x,y+player_size):
-        return False
-    if not check_point(x+player_size,y+player_size):
-        return False
-    return True
-
-run = True
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-    #right or left move
-        if event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_RIGHT:
-                move_x = 0.25
-            if event.key==pygame.K_LEFT:
-                move_x = -0.25
-        if event.type==pygame.KEYUP:
-            if event.key==pygame.K_RIGHT or event.key==pygame.K_LEFT:
-                move_x=0
-    #up or down move
-        if event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_DOWN:
-                move_y = 0.25
-            if event.key==pygame.K_UP:
-                move_y = -0.25
-        if event.type==pygame.KEYUP:
-            if event.key==pygame.K_DOWN or event.key==pygame.K_UP:
-                move_y=0
-#chce zeby przelecialo przez cala plaszczyzne kartezjanska a jesli jest oznaczony kwadrat jako visited to pomalowalo go od nowa na zielono
-    # for i in len(maze.visited):
-    #     if (playerX,playerY)==maze.visited:
-    #         pygame.draw.rect(maze.screen, maze.GREEN, (playerX, playerY, maze.cell_size, maze.cell_size))
-    tempX = playerX+move_x
-    tempY = playerY+move_y
-    if is_corridor(tempX,tempY):
-        playerX += move_x
-        playerY += move_y
-        background = pygame.image.load('maze.jpg')
-        maze.screen.blit(background, (0, 0))
-        player(playerX, playerY)
-        pygame.display.flip()
+main()
