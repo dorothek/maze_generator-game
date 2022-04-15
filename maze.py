@@ -27,8 +27,14 @@ class Maze(bonus.Board):
         self.map = [[]]
         self.background=pygame.image.load('moss.jpg')
 
+    # def __del__(self):
+    #
+
     def add_object(self, object: bonus.Object):
         self.object_list.append(object)
+
+    def remove_object(self, object: bonus.Object):
+        self.object_list.remove(object)
 
     def load_background(self):
         self.background = pygame.image.load('maze.jpg')

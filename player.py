@@ -16,4 +16,4 @@ class Human(Player):
 
 class Computer(Player):
     print("I am computer player")
-#tu bedzie automatycznie rozwiazywał labirynt
+#TODO tu bedzie automatycznie rozwiazywał labirynt
