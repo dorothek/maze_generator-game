@@ -7,6 +7,7 @@ from itertools import product
 
 WHITE=(255,255,255)
 GREEN=(0,170,0)
+RED=(255,0,0)
 
 class Maze(bonus.Board):
     def __init__(self, data: int):
@@ -16,6 +17,8 @@ class Maze(bonus.Board):
         self.visited = []
         self.stop = []
         self.board = []
+        self.path = []
+        self.solution = []
         self.web_size = data
         self.grid_size = (self.web_size * 2) + 1
         self.all_web = self.cell_size * self.grid_size
@@ -27,8 +30,6 @@ class Maze(bonus.Board):
         self.map = [[]]
         self.background=pygame.image.load('moss.jpg')
 
-    # def __del__(self):
-    #
 
     def add_object(self, object: bonus.Object):
         self.object_list.append(object)
@@ -73,6 +74,40 @@ class Maze(bonus.Board):
             return True
         else:
             return False
+
+    # maze solving
+    def czy_koniec(self, x, y):
+        print("Checking: ",x," ",y)
+        if (self.all_web - 2 * self.cell_size) == x and (self.all_web - self.cell_size) == y:
+            return True
+        else:
+            return False
+
+    def draw_solution(self, x,y):
+        self.path.append((x,y))
+        pygame.draw.circle(self.screen, WHITE, (x+15,y+15), 7)
+        pygame.display.flip()
+        if self.czy_koniec(x,y) == True:
+            self.solution.append((x,y))
+            return True
+        direct = []
+
+        # define possibilities of moves for solution
+        if self.check_point(x, y-self.cell_size) and (x, y-self.cell_size) not in self.path:
+            direct.append((x,y-self.cell_size))
+        if self.check_point(x, y+self.cell_size) and (x, y+self.cell_size) not in self.path:
+            direct.append((x, y+self.cell_size))
+        if self.check_point(x-self.cell_size, y) and (x-self.cell_size, y) not in self.path:
+            direct.append((x-self.cell_size, y))
+        if self.check_point(x+self.cell_size, y) and (x+self.cell_size, y) not in self.path:
+            direct.append((x+self.cell_size, y))
+        for i,j in direct:
+            if self.draw_solution(i, j)==True:
+                self.solution.append((i,j))
+                pygame.draw.rect(self.screen, RED, (i, j, self.cell_size, self.cell_size))
+                pygame.display.flip()
+                return True
+        return False
 
     #funcion for creating a web
     def build_web(self):

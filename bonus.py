@@ -21,9 +21,6 @@ class End(Object):
         self.img = pygame.image.load('end.png')
         self.object_size = 24
 
-    def winner(self):
-        print("Congratulations! You are the winner! :) ")
-
 #bonus cheese
 class Cheese(Object):
     def __init__(self):
@@ -31,9 +28,19 @@ class Cheese(Object):
         self.img = pygame.image.load('cheese.png')
         self.object_size = 16
 
-#enemy cat
-class Cat(Object):
+class Player(Object):
     def __init__(self):
         Object.__init__(self)
-        self.img = pygame.image.load('cat.png')
+
+    print("class Player")
+
+class Human(Player):
+    def __init__(self):
+        Player.__init__(self)
+        self.img = pygame.image.load('rat.png')
         self.object_size = 24
+        self.points=0
+
+class Computer(Player):
+    print("I am computer player")
+#TODO tu bedzie automatycznie rozwiazywał labirynt?

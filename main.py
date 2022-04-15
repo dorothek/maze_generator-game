@@ -1,6 +1,5 @@
 import bonus
 import maze
-import player
 import pygame
 import time
 import random
@@ -28,7 +27,7 @@ def again():
 
 # controls gameplay
 def start_game():
-    if messagebox.askyesno('Yes|No', 'Hello! Do you want to start "the maze game"?')==True:
+    if messagebox.askyesno('Yes|No', 'Do you want to play "the maze game"?')==True:
         messagebox.showinfo("Say Hello", "Welcome to the maze game!")
     else:
         messagebox.showinfo("Say Goodbay", "Ok, see you next time")
@@ -51,8 +50,10 @@ def choose_mode():
             messagebox.showinfo("Start human", "Human player mode has started")
         else:
             messagebox.showinfo("Start AI", "AI player mode has started")
+            return 1
     else:
         messagebox.showinfo("Start human vs AI", "Double player mode has started")
+        return 2
 
 
 def main():
@@ -60,12 +61,13 @@ def main():
     ws.title('Maze Game')
     ws.withdraw()
     start_game()
-    # show_rules()
+    # player chooses size of the maze
     answer1 = simpledialog.askinteger("Input", "Input the size of the maze? (between 3 and 11)", parent=ws,
                                       minvalue=3, maxvalue=11)
     data = int(answer1)
-    choose_mode()
+    mode = choose_mode()
     show_rules()
+
     # maze generation
     labirynt = maze.Maze(data)
     labirynt.make_cartesian()
@@ -74,7 +76,7 @@ def main():
     # creating map of the gameboard
     labirynt.create_map()
     labirynt.load_background()
-    gamer = player.Human()
+    gamer = bonus.Human()
     gamer.object_x = 2 * labirynt.cell_size
     gamer.object_y = labirynt.cell_size
     labirynt.add_object(gamer)
@@ -83,9 +85,10 @@ def main():
     end.object_x = labirynt.all_web - labirynt.cell_size
     end.object_y = labirynt.all_web
     labirynt.add_object(end)
+
     # calculates how many cheeses has to create in dependence of the maze size
     ser_num = int(data/2)
-    cheeses=[]
+    cheeses = []
     for num in range(ser_num):
         ser = bonus.Cheese()
         ser_landed = False
@@ -96,7 +99,11 @@ def main():
             labirynt.add_object(ser)
             cheeses.append(ser)
     labirynt.refresh_screen()
-
+    if mode == 1:
+        labirynt.draw_solution(2 * labirynt.cell_size, 2*labirynt.cell_size)
+    if mode == 2:
+        pass
+    # TODO moduł bitwy AI z człowiekiem
     # the main loop
     run = True
     while run:
@@ -109,7 +116,6 @@ def main():
         step_size = 2
         move_x = 0
         move_y = 0
-
 
         is_down_pressed = keyboard.is_pressed("down")
         is_up_pressed = keyboard.is_pressed("up")
