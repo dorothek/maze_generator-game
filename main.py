@@ -1,3 +1,6 @@
+import _thread
+from concurrent.futures import thread
+
 import bonus
 import maze
 import pygame
@@ -8,7 +11,7 @@ import keyboard
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
-
+import _thread
 
 def is_collision(object1: bonus.Object, object2: bonus.Object):
     distance = math.sqrt(math.pow(object1.object_x - object2.object_x, 2) +
@@ -105,6 +108,8 @@ def main():
         pass
     # TODO moduł bitwy AI z człowiekiem
     # the main loop
+    _thread.start_new_thread(labirynt.draw_solution,(2 * labirynt.cell_size, 2*labirynt.cell_size ))
+
     run = True
     while run:
         time.sleep(0.01)
@@ -148,5 +153,6 @@ def main():
                 del labirynt
                 again()
                 return
+
 while True:
     main()

@@ -25,7 +25,6 @@ class Maze(bonus.Board):
         pygame.init()
         pygame.display.set_caption("'THE MAZE GAME'")
         self.screen = pygame.display.set_mode((self.all_web + 2 * self.margin, self.all_web + 2 * self.margin))
-        # self.screen.fill(WHITE)
         self.object_list = []
         self.map = [[]]
         self.background=pygame.image.load('moss.jpg')
@@ -42,9 +41,13 @@ class Maze(bonus.Board):
 
     def refresh_screen(self):
         self.screen.blit(self.background, (0, 0))
+        for (x,y) in self.path:
+            pygame.draw.circle(self.screen, WHITE, (x + 15, y + 15), 7)
+        for (x,y) in self.solution:
+            pygame.draw.circle(self.screen, RED, (x + 15, y + 15), 7)
         for obj in self.object_list:
             self.screen.blit(obj.img, (obj.object_x, obj.object_y))
-            pygame.display.flip()
+        pygame.display.flip()
 
     def move_object_to(self, object: bonus.Object, x, y)->bool:
         if self.is_corridor(x, y, object):
@@ -77,7 +80,6 @@ class Maze(bonus.Board):
 
     # maze solving
     def czy_koniec(self, x, y):
-        print("Checking: ",x," ",y)
         if (self.all_web - 2 * self.cell_size) == x and (self.all_web - self.cell_size) == y:
             return True
         else:
@@ -86,6 +88,8 @@ class Maze(bonus.Board):
     def draw_solution(self, x,y):
         self.path.append((x,y))
         pygame.draw.circle(self.screen, WHITE, (x+15,y+15), 7)
+        time.sleep(0.1)
+        self.load_background()
         pygame.display.flip()
         if self.czy_koniec(x,y) == True:
             self.solution.append((x,y))
@@ -104,8 +108,10 @@ class Maze(bonus.Board):
         for i,j in direct:
             if self.draw_solution(i, j)==True:
                 self.solution.append((i,j))
-                pygame.draw.rect(self.screen, RED, (i, j, self.cell_size, self.cell_size))
+                pygame.draw.circle(self.screen, RED, (x+15,y+15), 7)
+                time.sleep(0.1)
                 pygame.display.flip()
+                self.load_background()
                 return True
         return False
 
