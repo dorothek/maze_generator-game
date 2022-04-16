@@ -4,6 +4,7 @@ import random
 import bonus
 import math
 from itertools import product
+from threading import Lock
 
 WHITE=(255,255,255)
 GREEN=(0,170,0)
@@ -28,7 +29,8 @@ class Maze(bonus.Board):
         self.object_list = []
         self.map = [[]]
         self.background=pygame.image.load('moss.jpg')
-
+        self.winner = ''
+        self.data_lock = Lock()
 
     def add_object(self, object: bonus.Object):
         self.object_list.append(object)
@@ -44,7 +46,7 @@ class Maze(bonus.Board):
         for (x,y) in self.path:
             pygame.draw.circle(self.screen, WHITE, (x + 15, y + 15), 7)
         for (x,y) in self.solution:
-            pygame.draw.circle(self.screen, RED, (x + 15, y + 15), 7)
+            pygame.draw.circle(self.screen, RED, (x + 15, y + 15), 5)
         for obj in self.object_list:
             self.screen.blit(obj.img, (obj.object_x, obj.object_y))
         pygame.display.flip()
@@ -78,21 +80,34 @@ class Maze(bonus.Board):
         else:
             return False
 
+    def get_winner(self):
+        with self.data_lock:
+            return self.winner
+
+    def set_winner(self, a_winner):
+        with self.data_lock:
+            self.winner = a_winner
+
     # maze solving
     def czy_koniec(self, x, y):
-        if (self.all_web - 2 * self.cell_size) == x and (self.all_web - self.cell_size) == y:
+        if (self.all_web - 1 * self.cell_size) == x and (self.all_web - self.cell_size) == y:
+            print("punkt koncowy: ", x/self.cell_size, y/self.cell_size)
             return True
         else:
             return False
 
     def draw_solution(self, x,y):
+        if self.get_winner()!='':
+            raise Exception
         self.path.append((x,y))
-        pygame.draw.circle(self.screen, WHITE, (x+15,y+15), 7)
-        time.sleep(0.1)
+        pygame.draw.circle(self.screen, WHITE, (x+self.cell_size/2, y+self.cell_size/2), 7)
+        time.sleep(0.2)
         self.load_background()
         pygame.display.flip()
         if self.czy_koniec(x,y) == True:
             self.solution.append((x,y))
+            pygame.draw.circle(self.screen, RED, (x + self.cell_size/2, y + self.cell_size/2), 5)
+            pygame.display.flip()
             return True
         direct = []
 
@@ -108,12 +123,20 @@ class Maze(bonus.Board):
         for i,j in direct:
             if self.draw_solution(i, j)==True:
                 self.solution.append((i,j))
-                pygame.draw.circle(self.screen, RED, (x+15,y+15), 7)
+                pygame.draw.circle(self.screen, RED, (i+self.cell_size/2,j+self.cell_size/2), 5)
                 time.sleep(0.1)
                 pygame.display.flip()
-                self.load_background()
                 return True
         return False
+
+    def find_solution(self):
+        try:
+            i=2 * self.cell_size
+            j= self.cell_size
+            if self.draw_solution(i,j)==True:
+                self.set_winner('Computer')
+        except Exception:
+            pass
 
     #funcion for creating a web
     def build_web(self):
