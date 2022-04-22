@@ -10,8 +10,6 @@ from tkinter import messagebox
 from tkinter import simpledialog
 import _thread
 
-cheese=0
-
 def is_collision(object1: bonus.Object, object2: bonus.Object):
     distance = math.sqrt(math.pow(object1.object_x - object2.object_x, 2) +
                          (math.pow(object1.object_y - object2.object_y, 2)))
@@ -157,8 +155,7 @@ def main():
                     if is_collision(ser, gamer)==True:
                         cheeses.remove(ser)
                         labirynt.remove_object(ser)
-                        global cheese
-                        cheese=cheese+10
+                        maze.cheese=maze.cheese+10
                 labirynt.refresh_screen()
                 if is_collision(end, gamer)==True:
                     labirynt.set_winner("human")

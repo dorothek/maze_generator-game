@@ -10,6 +10,9 @@ WHITE=(255,255,255)
 GREEN=(0,170,0)
 RED=(255,0,0)
 
+pygame.font.init()
+cheese = 0
+
 class Maze(bonus.Board):
     def __init__(self, data: int):
         self.cell_size = self.margin = 30
@@ -31,6 +34,10 @@ class Maze(bonus.Board):
         self.background=pygame.image.load('moss.jpg')
         self.winner = ''
         self.data_lock = Lock()
+        self.if_sign = True
+        self.font = pygame.font.Font('Roboto-Black.ttf', 23)
+        self.txt_x = 100
+        self.txt_y = 30
 
     def add_object(self, object: bonus.Object):
         self.object_list.append(object)
@@ -43,10 +50,12 @@ class Maze(bonus.Board):
 
     def refresh_screen(self):
         self.screen.blit(self.background, (0, 0))
-        for (x,y) in self.path:
+        score = self.font.render("Bonus cheese: " + str(cheese), self.if_sign, RED)
+        self.screen.blit(score, (self.txt_x, self.txt_y))
+        for (x, y) in self.path:
             pygame.draw.circle(self.screen, WHITE, (x + 15, y + 15), 7)
-        for (x,y) in self.solution:
-            pygame.draw.circle(self.screen, RED, (x + 15, y + 15), 5)
+        for (x, y) in self.solution:
+            pygame.draw.circle(self.screen, RED, (x + 15, y + 15), 7)
         for obj in self.object_list:
             self.screen.blit(obj.img, (obj.object_x, obj.object_y))
         pygame.display.flip()
