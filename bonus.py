@@ -8,6 +8,11 @@ class Object:
         self.object_y=0
         self.img=None
 
+    def give_xy(self):
+        x=str(self.object_x)
+        y=str(self.object_y)
+        return x+" "+y
+
 #interface of the board
 class Board():
     def move_object_to(self, object: Object, x, y)->bool:

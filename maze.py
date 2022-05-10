@@ -115,7 +115,7 @@ class Maze(bonus.Board):
         pygame.display.flip()
         if self.czy_koniec(x,y) == True:
             self.solution.append((x,y))
-            pygame.draw.circle(self.screen, RED, (x + self.cell_size/2, y + self.cell_size/2), 5)
+            pygame.draw.circle(self.screen, RED, (x + self.cell_size/2, y + self.cell_size/2), 7)
             pygame.display.flip()
             return True
         direct = []
@@ -132,7 +132,7 @@ class Maze(bonus.Board):
         for i,j in direct:
             if self.draw_solution(i, j)==True:
                 self.solution.append((i,j))
-                pygame.draw.circle(self.screen, RED, (i+self.cell_size/2,j+self.cell_size/2), 5)
+                pygame.draw.circle(self.screen, RED, (i+self.cell_size/2,j+self.cell_size/2), 7)
                 time.sleep(0.1)
                 pygame.display.flip()
                 return True

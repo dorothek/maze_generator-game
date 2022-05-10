@@ -13,7 +13,7 @@ import _thread
 def is_collision(object1: bonus.Object, object2: bonus.Object):
     distance = math.sqrt(math.pow(object1.object_x - object2.object_x, 2) +
                          (math.pow(object1.object_y - object2.object_y, 2)))
-    if distance < 10:
+    if distance < 15:
         return True
     else:
         return False
@@ -107,8 +107,9 @@ def main():
                 x = random.randint(0, labirynt.all_web - ser.object_size)
                 y = random.randint(0, labirynt.all_web - ser.object_size)
                 ser_landed = labirynt.move_object_to(ser, x, y)
-                labirynt.add_object(ser)
-                cheeses.append(ser)
+                if ser_landed:
+                    labirynt.add_object(ser)
+                    cheeses.append(ser)
         labirynt.refresh_screen()
 
         run = True
@@ -156,6 +157,7 @@ def main():
                         cheeses.remove(ser)
                         labirynt.remove_object(ser)
                         maze.cheese=maze.cheese+10
+                        break
                 labirynt.refresh_screen()
                 if is_collision(end, gamer)==True:
                     labirynt.set_winner("human")
